@@ -29,7 +29,6 @@ def preprocess_input(df):
         if col not in df_encoded.columns:
             df_encoded[col] = 0
 
-    # Ensure only expected features are passed to scaler/model
     return df_encoded[REQUIRED_FEATURES]
 
 # Streamlit UI
@@ -69,6 +68,7 @@ with tab1:
         })
 
         processed = preprocess_input(input_df)
+        processed = processed.reindex(columns=scaler.feature_names_in_, fill_value=0)
         scaled = scaler.transform(processed)
         prediction = model.predict(scaled)[0]
         st.success(f"💰 Estimated Salary: ₹ {int(prediction):,}")
@@ -100,6 +100,7 @@ with tab2:
                         df[col] = 'Unknown' if col != 'Experience' else 0
 
                 processed = preprocess_input(df)
+                processed = processed.reindex(columns=scaler.feature_names_in_, fill_value=0)
                 scaled = scaler.transform(processed)
                 predictions = model.predict(scaled)
                 df['Predicted Salary'] = predictions.astype(int)
