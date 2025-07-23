@@ -13,7 +13,7 @@ This app helps HR departments and companies estimate salary ranges for employees
 - 🧮 Encodes categorical data using OneHotEncoder
 
 ## 🚀 Live App 
-[Click here to use the app](https://employeesalaryprediction-8.streamlit.app/)
+[Click here to use the app](https://employees-salary-prediction.streamlit.app/)
 
 ---
 
