@@ -19,11 +19,11 @@ This app helps HR departments and companies estimate salary ranges for employees
 
 ## 🖥️ Screenshots
 
-<img width="1918" height="869" alt="image" src="https://github.com/user-attachments/assets/f3bfcc22-7cc1-4eb8-ac4b-c1792999dbbf" />
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/304be2a6-4e83-4ece-8676-cf460b86ba59" />
-<img width="941" height="786" alt="image" src="https://github.com/user-attachments/assets/5686d76b-bfc7-47ce-97d6-850904917d4c" />
-<img width="941" height="786" alt="image" src="https://github.com/user-attachments/assets/9c762fe9-3a32-4137-9305-046445a00578" />
-<img width="938" height="756" alt="image" src="https://github.com/user-attachments/assets/31a3266d-a73a-488c-87c3-dc8da773a9b6" />
+<img src="screenshots/screenshot1.png" width="100%">
+<img src="screenshots/screenshot2.png" width="100%">
+<img src="screenshots/screenshot3.png" width="100%">
+<img src="screenshots/screenshot4.png" width="100%">
+
 
 ---
 
