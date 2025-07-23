@@ -5,20 +5,7 @@ import joblib
 # Load model and scaler
 model = joblib.load('model.pkl')
 scaler = joblib.load('encoder_scaler.pkl')
-
-# Define required features
-REQUIRED_FEATURES = [
-    'Experience',
-    'Education_Bachelors', 'Education_Masters', 'Education_PhD',
-    'Role_Analyst', 'Role_Developer', 'Role_Manager',
-    'Location_Bangalore', 'Location_Delhi',
-    'Location_Hyderabad', 'Location_Mumbai', 'Location_Pune',
-    'Skills_Python', 'Skills_Excel', 'Skills_SQL', 'Skills_Java',
-    'Department_IT', 'Department_Finance', 'Department_HR', 'Department_Marketing',
-    'JobLevel_Junior', 'JobLevel_Mid', 'JobLevel_Senior',
-    'Certifications_Yes', 'Certifications_No',
-    'RemoteWork_Yes', 'RemoteWork_No'
-]
+REQUIRED_FEATURES = joblib.load('required_features.pkl')
 
 # Preprocessing function
 def preprocess_input(df):
@@ -68,7 +55,6 @@ with tab1:
         })
 
         processed = preprocess_input(input_df)
-        processed = processed.reindex(columns=scaler.feature_names_in_, fill_value=0)
         scaled = scaler.transform(processed)
         prediction = model.predict(scaled)[0]
         st.success(f"💰 Estimated Salary: ₹ {int(prediction):,}")
@@ -90,27 +76,22 @@ with tab2:
     if uploaded_file:
         try:
             df = pd.read_csv(uploaded_file)
+            expected_cols = ['Experience', 'Education', 'Role', 'Location', 'Skills',
+                             'Department', 'JobLevel', 'Certifications', 'RemoteWork']
 
-            matching_cols = set(df.columns) & {'Experience', 'Education', 'Role', 'Location', 'Skills', 'Department', 'JobLevel', 'Certifications', 'RemoteWork'}
+            for col in expected_cols:
+                if col not in df.columns:
+                    df[col] = 'Unknown' if col != 'Experience' else 0
 
-            if len(matching_cols) >= 1:
-                # Fill missing expected columns with dummy values
-                for col in ['Experience', 'Education', 'Role', 'Location', 'Skills', 'Department', 'JobLevel', 'Certifications', 'RemoteWork']:
-                    if col not in df.columns:
-                        df[col] = 'Unknown' if col != 'Experience' else 0
+            processed = preprocess_input(df)
+            scaled = scaler.transform(processed)
+            predictions = model.predict(scaled)
+            df['Predicted Salary'] = predictions.astype(int)
 
-                processed = preprocess_input(df)
-                processed = processed.reindex(columns=scaler.feature_names_in_, fill_value=0)
-                scaled = scaler.transform(processed)
-                predictions = model.predict(scaled)
-                df['Predicted Salary'] = predictions.astype(int)
+            st.success("✅ Salary prediction completed successfully!")
+            st.download_button("📩 Download Predicted Results", df.to_csv(index=False).encode(), "predicted_salaries.csv", "text/csv")
+            st.markdown("### 📊 Prediction Results")
+            st.dataframe(df)
 
-                st.success("✅ Salary prediction completed successfully!")
-                st.download_button("📩 Download Predicted Results", df.to_csv(index=False).encode(), "predicted_salaries.csv", "text/csv")
-                st.markdown("### 📊 Prediction Results")
-                st.dataframe(df)
-
-            else:
-                st.error("❗ The uploaded file must contain **at least one** of the expected columns.")
         except Exception as e:
             st.error(f"❌ Error processing the uploaded file: {e}")

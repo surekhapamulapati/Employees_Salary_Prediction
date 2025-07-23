@@ -1,36 +1,32 @@
 import pandas as pd
-import joblib
-from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.neighbors import KNeighborsRegressor
+import joblib
 
-# Updated sample dataset with extra columns
-data = pd.DataFrame({
-    'Experience': [1, 3, 5, 7, 10],
-    'Education': ['Bachelors', 'Masters', 'PhD', 'Masters', 'Bachelors'],
-    'Role': ['Developer', 'Manager', 'Developer', 'Analyst', 'Manager'],
-    'Location': ['Hyderabad', 'Bangalore', 'Mumbai', 'Pune', 'Delhi'],
-    'Skills': ['Python', 'Excel', 'Java', 'SQL', 'Python'],
-    'Department': ['IT', 'Finance', 'IT', 'Marketing', 'HR'],
-    'JobLevel': ['Junior', 'Senior', 'Mid', 'Junior', 'Senior'],
-    'Certifications': ['Yes', 'No', 'No', 'Yes', 'Yes'],
-    'RemoteWork': ['No', 'Yes', 'Yes', 'No', 'No'],
-    'Salary': [30000, 50000, 80000, 60000, 90000]
-})
+# Load dataset
+df = pd.read_csv('data.csv')
 
-# One-hot encoding
-df_encoded = pd.get_dummies(data.drop('Salary', axis=1))
-X = df_encoded
-y = data['Salary']
+# Features to use
+features = ['Experience', 'Education', 'Role', 'Location', 'Skills', 'Department',
+            'JobLevel', 'Certifications', 'RemoteWork']
+target = 'Salary'
 
-# Scale features
+# One-hot encode categorical features
+df_encoded = pd.get_dummies(df[features])
+REQUIRED_FEATURES = df_encoded.columns.tolist()
+
+# Save for app usage
+joblib.dump(REQUIRED_FEATURES, 'required_features.pkl')
+
+# Scale numeric features
 scaler = MinMaxScaler()
-X_scaled = scaler.fit_transform(X)
+X_scaled = scaler.fit_transform(df_encoded)
 
-# Train model
-model = RandomForestRegressor()
-model.fit(X_scaled, y)
+# Train KNN model
+y = df[target]
+knn = KNeighborsRegressor(n_neighbors=5)
+knn.fit(X_scaled, y)
 
 # Save model and scaler
-joblib.dump(model, 'model.pkl')
+joblib.dump(knn, 'model.pkl')
 joblib.dump(scaler, 'encoder_scaler.pkl')
-print("✅ Model and scaler saved with extended features.")
